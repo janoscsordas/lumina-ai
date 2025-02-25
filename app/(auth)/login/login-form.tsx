@@ -20,32 +20,20 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-    name: z.string().min(1, {
-        message: "Name is required."
-    }).max(32, {
-        message: "Name must be less than 32 characters."
-    }),
     email: z.string().email({
         message: "Invalid email."
     }),
     password: z.string().min(1, {
         message: "Password is required."
-    }).min(8, {
-        message: "Password must be at least 8 characters."
-    }).max(48, {
-        message: "Password must be less than 48 characters."
-    }).regex(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/, {
-        message: "Password must contain at least 1 capital letter, 1 number, and 1 special character."
-    }),
+    })
 })
 
-export default function RegisterForm() {
+export default function LoginForm() {
     const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
             email: "",
             password: "",
         },
@@ -54,15 +42,12 @@ export default function RegisterForm() {
     const { isSubmitting } = form.formState
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await authClient.signUp.email({
-            name: values.name,
+        await authClient.signIn.email({
             email: values.email,
             password: values.password,
         }, {
             onSuccess: () => {
-                // send email function will be here
-                // await sendEmail(email)
-                toast.success("Successfully signed up!")
+                toast.success("Successfully logged in! Welcome back!")
                 router.push('/')
             },
             onError: (ctx) => {
@@ -74,19 +59,6 @@ export default function RegisterForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField 
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Name" required {...field} disabled={isSubmitting} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
                 <FormField
                     control={form.control}
                     name="email"
@@ -117,10 +89,10 @@ export default function RegisterForm() {
                     {isSubmitting ? (
                         <>
                             <Loader2Icon className="animate-spin mr-2" />
-                            <span>Signing up...</span>
+                            <span>Logging in...</span>
                         </>
                     ) : (
-                        <span>Sign up</span>
+                        <span>Log in</span>
                     )}
                 </Button>
             </form>

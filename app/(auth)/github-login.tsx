@@ -40,7 +40,7 @@ export default function GithubLogin() {
                 ) : (
                     <>
                         <Github className="mr-2" />
-                        <span>Sign in with GitHub</span>
+                        <span>Continue with GitHub</span>
                     </>
                 )}
             </Button>
