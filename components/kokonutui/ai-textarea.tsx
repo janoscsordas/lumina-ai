@@ -1,27 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
 import { ArrowUpCircle, Paperclip, Globe, Figma } from "lucide-react";
+import { ChangeEvent } from "react";
 
-export default function AITextarea() {
-    const [value, setValue] = useState("");
+export default function AITextarea({
+    value,
+    setValue,
+    disabled
+}: {
+    value: string;
+    setValue: (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => void;
+    disabled?: boolean;
+}) {
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 80,
         maxHeight: 200,
     });
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            if (value.trim()) {
-                setValue("");
-                adjustHeight(true);
-            }
-        }
-    };
 
     return (
         <div className="p-4 min-w-full">
@@ -32,10 +29,9 @@ export default function AITextarea() {
                             ref={textareaRef}
                             value={value}
                             onChange={(e) => {
-                                setValue(e.target.value);
+                                setValue(e);
                                 adjustHeight();
                             }}
-                            onKeyDown={handleKeyDown}
                             placeholder="Ask me anything..."
                             className={cn(
                                 "w-full px-4 py-3",
@@ -52,6 +48,7 @@ export default function AITextarea() {
                                 overflow: "hidden",
                                 outline: "none",
                             }}
+                            disabled={disabled}
                         />
                     </div>
 
@@ -78,11 +75,12 @@ export default function AITextarea() {
                                 </button>
                             </div>
                             <button
-                                type="button"
+                                type="submit"
+                                disabled={disabled}
                                 className={cn(
                                     "p-2 transition-colors",
                                     value.trim()
-                                        ? "text-blue-500 hover:text-blue-600"
+                                        ? "text-lime-600 dark:text-lime hover:dark:text-lime-700 hover:text-lime-600"
                                         : "text-black/30 dark:text-white/30"
                                 )}
                             >
