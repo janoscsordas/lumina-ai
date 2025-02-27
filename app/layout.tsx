@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/components/theme-provider";
+import Provider from "@/lib/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Lumina AI",
-  description: "Lumina AI is a chatbot that can help you with your coding questions.",
+  description:
+    "Lumina AI is a chatbot that can help you with your coding questions.",
 };
 
 export default function RootLayout({
@@ -35,8 +37,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster position="bottom-right" reverseOrder={false} />
-          {children}
+          <Provider>
+            <Toaster position="bottom-right" reverseOrder={false} />
+            {children}
+          </Provider>
         </ThemeProvider>
       </body>
     </html>

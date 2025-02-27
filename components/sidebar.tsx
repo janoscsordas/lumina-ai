@@ -9,10 +9,14 @@ import {
   MessageSquare,
   SquarePen,
   SearchIcon,
+  Loader2Icon,
 } from "lucide-react";
 import Link from "next/link";
 import UserAvatar from "./user-avatar";
 import { User } from "better-auth";
+import { useQuery } from "@tanstack/react-query";
+import { Chat } from "@/database/schema/chat-schema";
+import { Skeleton } from "./ui/skeleton";
 
 interface SidebarProps {
   user: User | null;
@@ -20,15 +24,22 @@ interface SidebarProps {
 
 const Sidebar = ({ user }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  const { data: chats, isLoading } = useQuery({
+    queryKey: ["chat-history"],
+    queryFn: async () => {
+      const res = await fetch("/api/chat-history", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      return data as Chat[];
+    },
+  });
 
-  // Sample chat history data
-  const chatHistory = [
-    { id: 1, title: "Getting started with the API", date: "2 hours ago" },
-    { id: 2, title: "Deployment options", date: "Yesterday" },
-    { id: 3, title: "Authentication methods", date: "3 days ago" },
-    { id: 4, title: "Handling webhooks", date: "1 week ago" },
-    { id: 5, title: "Rate limiting strategies", date: "2 weeks ago" },
-  ];
+  const chatHistory = chats;
 
   return (
     <div className="relative">
@@ -67,39 +78,48 @@ const Sidebar = ({ user }: SidebarProps) => {
 
         {/* Chat history */}
         <ScrollArea className="flex-1 px-3">
-          <div className="space-y-2 py-2">
-            {chatHistory && (
-              <h2 className="text-sm font-semibold text-muted-foreground pb-2">
-                Chat History
-              </h2>
-            )}
-            {chatHistory ? (
-              chatHistory.map((chat) => (
-                <Button
-                  key={chat.id}
-                  variant="ghost"
-                  className={`w-full justify-start ${
-                    isCollapsed ? "px-2" : ""
-                  }`}
-                  title={chat.title}
-                >
-                  <MessageSquare
-                    className={`h-4 w-4 ${isCollapsed ? "" : "mr-2"}`}
-                  />
-                  <div className="flex flex-col items-start">
-                    <span className="text-sm truncate">{chat.title}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {chat.date}
-                    </span>
-                  </div>
-                </Button>
-              ))
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                No chat history available. You are not logged in.
-              </p>
-            )}
-          </div>
+          {isLoading ? (
+            <Skeleton className="w-full justify-start py-8 mt-2">
+              <Loader2Icon className="w-5 h-5 animate-spin mx-auto" />
+            </Skeleton>
+          ) : (
+            <div className="space-y-2 py-2">
+              {chatHistory && (
+                <h2 className="text-sm font-semibold text-muted-foreground pb-2">
+                  Chat History
+                </h2>
+              )}
+              {chatHistory && chatHistory.length > 0 ? (
+                chatHistory.map((chat) => (
+                  <Link href={`/chat/${chat.id}`} key={chat.id}>
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start py-6 ${
+                        isCollapsed ? "px-2" : ""
+                      }`}
+                      title={chat.title}
+                    >
+                      <MessageSquare
+                        className={`h-4 w-4 ${isCollapsed ? "" : "mr-2"}`}
+                      />
+                      <div className="flex flex-col items-start">
+                        <span className="text-sm truncate">{chat.title}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {chat.createdAt
+                            ? new Date(chat.createdAt).toLocaleDateString()
+                           : "No date available"}
+                        </span>
+                      </div>
+                    </Button>
+                  </Link>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No chat history available.
+                </p>
+              )}
+            </div>
+          )}
         </ScrollArea>
 
         {/* User navbar at bottom */}
