@@ -33,7 +33,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   return (
     <main className="w-full min-h-screen flex gap-2">
-      <Sidebar user={session ? session?.user : null} />
+      <Sidebar user={session ? session?.user : null} currentChatId={id} />
       <ChatComponent id={id} initialMessages={convertToUIMessages(messagesFromDB)} />
     </main>
   )

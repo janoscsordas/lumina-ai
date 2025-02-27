@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/database";
 import { chat, message, Message } from "@/database/schema/chat-schema";
 import { desc, eq } from "drizzle-orm";
@@ -63,7 +65,8 @@ export async function getChatHistory({ userId }: { userId: string }) {
       .select()
       .from(chat)
       .where(eq(chat.userId, userId))
-      .orderBy(desc(chat.createdAt));
+      .orderBy(desc(chat.createdAt))
+      .limit(10);
 
     return chats;
   } catch (error) {

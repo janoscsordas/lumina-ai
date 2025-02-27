@@ -30,7 +30,7 @@ export const message = sqliteTable("message", {
     .notNull()
     .references(() => chat.id),
   role: text("role").notNull(),
-  content: text("content").notNull(),
+  content: text("content", { mode: 'json' }).notNull(),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

@@ -4,6 +4,8 @@ import AITextarea from "../kokonutui/ai-textarea";
 import { ScrollArea } from "../ui/scroll-area";
 import { Message, useChat } from "@ai-sdk/react";
 import { TextShimmer } from "../ui/text-shimmer";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export default function ChatComponent({
   id,
@@ -12,10 +14,19 @@ export default function ChatComponent({
   id: string;
   initialMessages: Array<Message>;
 }) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
   const { messages, input, handleInputChange, handleSubmit, error, status } =
     useChat({
       id, 
       initialMessages,
+      onFinish: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["chat-history"]
+        });
+        router.push(`/chat/${id}`)
+      }
     });
 
   return (

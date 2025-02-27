@@ -10,6 +10,7 @@ import {
   SquarePen,
   SearchIcon,
   Loader2Icon,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import UserAvatar from "./user-avatar";
@@ -17,12 +18,14 @@ import { User } from "better-auth";
 import { useQuery } from "@tanstack/react-query";
 import { Chat } from "@/database/schema/chat-schema";
 import { Skeleton } from "./ui/skeleton";
+import DeleteButton from "./delete-button";
 
 interface SidebarProps {
   user: User | null;
+  currentChatId?: string;
 }
 
-const Sidebar = ({ user }: SidebarProps) => {
+const Sidebar = ({ user, currentChatId }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   const { data: chats, isLoading } = useQuery({
@@ -37,6 +40,7 @@ const Sidebar = ({ user }: SidebarProps) => {
       const data = await res.json();
       return data as Chat[];
     },
+    refetchOnWindowFocus: false,
   });
 
   const chatHistory = chats;
@@ -89,35 +93,46 @@ const Sidebar = ({ user }: SidebarProps) => {
                   Chat History
                 </h2>
               )}
-              {chatHistory && chatHistory.length > 0 ? (
-                chatHistory.map((chat) => (
-                  <Link href={`/chat/${chat.id}`} key={chat.id}>
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start py-6 ${
-                        isCollapsed ? "px-2" : ""
-                      }`}
-                      title={chat.title}
-                    >
-                      <MessageSquare
-                        className={`h-4 w-4 ${isCollapsed ? "" : "mr-2"}`}
-                      />
-                      <div className="flex flex-col items-start">
-                        <span className="text-sm truncate">{chat.title}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {chat.createdAt
-                            ? new Date(chat.createdAt).toLocaleDateString()
-                           : "No date available"}
-                        </span>
-                      </div>
-                    </Button>
+              <div className="flex flex-col gap-1">
+                {chatHistory && chatHistory.length > 0 ? (
+                  chatHistory.map((chat) => (
+                    <Link href={`/chat/${chat.id}`} key={chat.id} className="relative group">
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start py-6 cursor-pointer ${
+                          isCollapsed ? "px-2" : ""
+                        } ${chat.id === currentChatId ? "bg-accent" : "" }`}
+                        title={chat.title}
+                      >
+                        <MessageSquare
+                          className={`h-4 w-4 ${isCollapsed ? "" : "mr-2"}`}
+                        />
+                        <div className="flex flex-col items-start">
+                          <span className="text-sm truncate">{chat.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {chat.createdAt
+                              ? new Date(chat.createdAt).toLocaleDateString()
+                             : "No date available"}
+                          </span>
+                        </div>
+                      </Button>
+                      <DeleteButton chatId={chat.id} />
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No chat history available.
+                  </p>
+                )}
+                {chatHistory && chatHistory.length === 10 && (
+                  <Link href="/history" className="text-sm text-muted-foreground flex items-center gap-2 mx-2 mt-3 hover:text-lime-600 dark:hover:text-lime">
+                    <span>
+                      Show more
+                    </span>
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  No chat history available.
-                </p>
-              )}
+                )}
+              </div>
             </div>
           )}
         </ScrollArea>
