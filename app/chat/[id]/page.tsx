@@ -1,9 +1,10 @@
-import ChatComponent from "@/components/chat/chat-component";
+import ChatWrapper from "@/components/chat/chat-wrapper";
+import LoadingSuspense from "@/components/chat/loading-suspense";
 import Sidebar from "@/components/sidebar";
-import { getChatById, getMessagesByChatId } from "@/lib/db/queries";
+import { getChatById } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
-import { convertToUIMessages } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -27,14 +28,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
-  const messagesFromDB = await getMessagesByChatId({
-    id,
-  })
-
   return (
     <main className="w-full min-h-screen flex gap-2">
-      <Sidebar user={session ? session?.user : null} currentChatId={id} />
-      <ChatComponent id={id} initialMessages={convertToUIMessages(messagesFromDB)} />
+      <Sidebar user={session ? session?.user : null} currentChatId={chat.id} />
+      <Suspense fallback={<LoadingSuspense />}>
+        <ChatWrapper id={chat.id} />
+      </Suspense>
     </main>
   )
 }

@@ -3,13 +3,16 @@ import { headers } from "next/headers";
 
 // Get the currently logged in user's session.
 export async function getUserSession() {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
 
-    if (!session) {
-        return null
+        return session || null;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error);
+        }
+        return null;
     }
-
-    return session
 }

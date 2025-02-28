@@ -6,8 +6,11 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SignOut() {
+    const queryClient = useQueryClient();
+
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -19,6 +22,9 @@ export default function SignOut() {
             await authClient.signOut();
             toast.success("Signed out successfully");
             router.push("/");
+            await queryClient.invalidateQueries({
+                queryKey: ["chat-history"]
+            });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 toast.error(error.message);

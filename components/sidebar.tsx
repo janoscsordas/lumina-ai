@@ -18,7 +18,6 @@ import { User } from "better-auth";
 import { useQuery } from "@tanstack/react-query";
 import { Chat } from "@/database/schema/chat-schema";
 import { Skeleton } from "./ui/skeleton";
-import DeleteButton from "./delete-button";
 
 interface SidebarProps {
   user: User | null;
@@ -31,16 +30,27 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
   const { data: chats, isLoading } = useQuery({
     queryKey: ["chat-history"],
     queryFn: async () => {
+      if (user === null) {
+        return []
+      }
       const res = await fetch("/api/chat-history", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch chat history");
+      }
+
+      const { data } = await res.json();
       return data as Chat[];
     },
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: false,
+    staleTime: 1000 * 60,
   });
 
   const chatHistory = chats;
@@ -88,15 +98,13 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
             </Skeleton>
           ) : (
             <div className="space-y-2 py-2">
-              {chatHistory && (
-                <h2 className="text-sm font-semibold text-muted-foreground pb-2">
-                  Chat History
-                </h2>
-              )}
+              <h2 className="text-sm font-semibold text-muted-foreground pb-2">
+                Chat History
+              </h2>
               <div className="flex flex-col gap-1">
                 {chatHistory && chatHistory.length > 0 ? (
                   chatHistory.map((chat) => (
-                    <Link href={`/chat/${chat.id}`} key={chat.id} className="relative group">
+                    <Link href={`/chat/${chat.id}`} key={chat.id}>
                       <Button
                         variant="ghost"
                         className={`w-full justify-start py-6 cursor-pointer ${
@@ -116,7 +124,6 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
                           </span>
                         </div>
                       </Button>
-                      <DeleteButton chatId={chat.id} />
                     </Link>
                   ))
                 ) : (

@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -10,12 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Loader2Icon, LogOutIcon, Settings } from "lucide-react";
+import { History, Loader2Icon, LogOutIcon, Settings } from "lucide-react";
 import { User } from "better-auth";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserAvatarProps {
   user: User | null;
@@ -23,6 +26,7 @@ interface UserAvatarProps {
 
 export default function UserAvatar({ user }: UserAvatarProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -32,6 +36,12 @@ export default function UserAvatar({ user }: UserAvatarProps) {
       toast.promise(async () => {
         await authClient.signOut();
         router.push("/");
+
+        setTimeout(async () => {
+          await queryClient.invalidateQueries({
+            queryKey: ["chat-history"],
+          });
+        }, 300)
       }, {
         loading: "Signing out...",
         success: "Signed out successfully",
@@ -83,6 +93,12 @@ export default function UserAvatar({ user }: UserAvatarProps) {
             <DropdownMenuItem>
               <Settings size={16} className="opacity-60" aria-hidden="true" />
               <span>Settings</span>
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/history">
+            <DropdownMenuItem>
+              <History size={16} className="opacity-60" aria-hidden="true" />
+              <span>History</span>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
