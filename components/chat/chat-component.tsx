@@ -32,7 +32,7 @@ export default function ChatComponent({
           });
 
           setTimeout(() => {
-            router.push(`/chat/${id}`);
+            router.push(`/chat/${id}?new=true`);
           }, 300);
         }
       },

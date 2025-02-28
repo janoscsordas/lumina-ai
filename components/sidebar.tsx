@@ -91,7 +91,7 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
         </div>
 
         {/* Chat history */}
-        <ScrollArea className="flex-1 px-3">
+        <ScrollArea className="flex-grow h-1 overflow-y-auto px-3">
           {isLoading ? (
             <Skeleton className="w-full justify-start py-8 mt-2">
               <Loader2Icon className="w-5 h-5 animate-spin mx-auto" />

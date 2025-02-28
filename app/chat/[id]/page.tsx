@@ -1,12 +1,10 @@
 import ChatWrapper from "@/components/chat/chat-wrapper";
-// import LoadingSuspense from "@/components/chat/loading-suspense";
 import Sidebar from "@/components/sidebar";
 import { getChatById } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
 import { notFound } from "next/navigation";
-// import { Suspense } from "react";
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {  
   const params = await props.params;
   const { id } = params;
 
