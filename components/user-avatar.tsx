@@ -64,7 +64,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
         <Button
           size="icon"
           variant="ghost"
-          className="rounded-full cursor-pointer"
+          className="rounded-full cursor-pointer flex justify-center items-center"
         >
           <Avatar className="w-8 h-8">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
@@ -73,7 +73,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64">
-        <DropdownMenuLabel className="flex items-start gap-3">
+        <DropdownMenuLabel className="flex items-center gap-3">
           <Avatar className="w-8 h-8">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
             <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>

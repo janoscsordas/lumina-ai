@@ -59,7 +59,7 @@ export async function saveMessages({ messages }: { messages: Array<Message> }) {
   }
 }
 
-export async function getChatHistory({ userId }: { userId: string }) {
+export async function getLastTenChatHistory({ userId }: { userId: string }) {
   try {
     const chats = await db
       .select()
@@ -67,6 +67,21 @@ export async function getChatHistory({ userId }: { userId: string }) {
       .where(eq(chat.userId, userId))
       .orderBy(desc(chat.createdAt))
       .limit(10);
+
+    return chats;
+  } catch (error) {
+    console.error("Failed to get chat history from database");
+    throw error;
+  }
+}
+
+export async function getAllChatHistory({ userId }: { userId: string }) {
+  try {
+    const chats = await db
+      .select()
+      .from(chat)
+      .where(eq(chat.userId, userId))
+      .orderBy(desc(chat.createdAt));
 
     return chats;
   } catch (error) {

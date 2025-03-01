@@ -1,4 +1,4 @@
-import { getChatHistory } from "@/lib/db/queries";
+import { getLastTenChatHistory } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
 import { NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const chatHistory = await getChatHistory({ userId: session.user.id });
+    const chatHistory = await getLastTenChatHistory({ userId: session.user.id });
 
     return NextResponse.json({ data: chatHistory || [] }, { status: 200 });
   } catch (error) {
