@@ -1,11 +1,13 @@
 import { generateTitle } from "@/actions/chat.action";
 import { openrouter } from "@/lib/ai/model";
 import { systemPrompt } from "@/lib/ai/prompts";
-import { getChatById, saveChat, saveMessages } from "@/lib/db/queries";
+import { deleteChat, getChatById, saveChat, saveMessages } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
 import { getMostRecentUserMessage, sanitizeResponseMessages } from "@/lib/utils";
 
 import { createDataStreamResponse, streamText } from "ai";
+import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
 
 export const maxDuration = 60;
 
@@ -81,4 +83,30 @@ export async function POST(request: Request) {
       return "An error occurred while processing your request. Please try again.";
     },
   });
+}
+
+export async function DELETE(request: Request) {
+  const session = await getUserSession();
+
+  if (!session) {
+    return NextResponse.json("You are not logged in!", { status: 401 });
+  }
+
+  try {
+    const { id } = await request.json();
+
+    const chat = await getChatById({ id });
+
+    if (!chat) {
+      return new Response("Chat not found!", { status: 404 });
+    }
+
+    await deleteChat({ id });
+  } catch (error: unknown) {
+    console.error("Failed to delete chat:", error);
+    return NextResponse.json({ error: "Failed to delete chat!" }, { status: 500 });
+  }
+
+  revalidatePath("/history");
+  return NextResponse.json({ message: "Chat deleted successfully!" }, { status: 200 });
 }

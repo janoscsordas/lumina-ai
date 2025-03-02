@@ -28,7 +28,7 @@ export const message = sqliteTable("message", {
     .$defaultFn(() => crypto.randomUUID()),
   chatId: text("chat_id")
     .notNull()
-    .references(() => chat.id),
+    .references(() => chat.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
   content: text("content", { mode: 'json' }).notNull(),
   createdAt: text("created_at")

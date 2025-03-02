@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/database";
-import { chat, message, Message } from "@/database/schema/chat-schema";
-import { desc, eq } from "drizzle-orm";
+import { Chat, chat, message, Message } from "@/database/schema/chat-schema";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 export async function getChatById({ id }: { id: string }) {
   try {
@@ -75,17 +75,37 @@ export async function getLastTenChatHistory({ userId }: { userId: string }) {
   }
 }
 
-export async function getAllChatHistory({ userId }: { userId: string }) {
+export async function getAllChatHistory({ userId, query }: { userId: string, query?: string }) {
   try {
+    if (!query || query.trim() === "") {
+      return await db
+        .select()
+        .from(chat)
+        .where(eq(chat.userId, userId))
+        .orderBy(desc(chat.createdAt));
+    }
+
     const chats = await db
       .select()
       .from(chat)
-      .where(eq(chat.userId, userId))
+      .where(and(
+        eq(chat.userId, userId),
+        sql`lower(${chat.title}) LIKE lower(${'%' + query + '%'})`
+      ))
       .orderBy(desc(chat.createdAt));
 
     return chats;
   } catch (error) {
-    console.error("Failed to get chat history from database");
+    console.error("Failed to get chat history from database", error);
+    return ([] as Chat[]);
+  }
+}
+
+export async function deleteChat({ id }: { id: string }) {
+  try {
+    await db.delete(chat).where(eq(chat.id, id));
+  } catch (error) {
+    console.error("Failed to delete chat from database", error);
     throw error;
   }
 }
