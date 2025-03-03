@@ -25,22 +25,22 @@ const chatBubbleVariants = cva(
     compoundVariants: [
       {
         isUser: true,
-        animation: "slide",
+        animation: "none",
         class: "slide-in-from-right",
       },
       {
         isUser: false,
-        animation: "slide",
+        animation: "none",
         class: "slide-in-from-left",
       },
       {
         isUser: true,
-        animation: "scale",
+        animation: "none",
         class: "origin-bottom-right",
       },
       {
         isUser: false,
-        animation: "scale",
+        animation: "none",
         class: "origin-bottom-left",
       },
     ],
@@ -94,7 +94,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   content,
   createdAt,
   showTimeStamp = false,
-  animation = "scale",
+  animation = "none",
   actions,
   className,
   toolInvocations,
