@@ -18,6 +18,7 @@ import { User } from "better-auth";
 import { useQuery } from "@tanstack/react-query";
 import { Chat } from "@/database/schema/chat-schema";
 import { Skeleton } from "./ui/skeleton";
+import SearchMenu from "./search-menu";
 
 interface SidebarProps {
   user: User | null;
@@ -26,12 +27,13 @@ interface SidebarProps {
 
 const Sidebar = ({ user, currentChatId }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
+  const [isOpen, setIsOpen] = useState(false);
+
   const { data: chats, isLoading } = useQuery({
     queryKey: ["chat-history"],
     queryFn: async () => {
       if (user === null) {
-        return []
+        return [];
       }
       const res = await fetch("/api/chat-history", {
         method: "GET",
@@ -48,9 +50,9 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
       return data as Chat[];
     },
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     retry: false,
-    staleTime: 1000 * 60,
+    staleTime: 0,
   });
 
   const chatHistory = chats;
@@ -79,11 +81,21 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
         <div className="px-3 pt-[1.425rem] pb-4 flex items-center justify-between gap-2">
           <h1 className="text-xl font-bold">Lumina AI</h1>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="w-7 h-7 cursor-pointer">
+            <SearchMenu open={isOpen} setOpen={setIsOpen} />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-7 h-7 cursor-pointer"
+              onClick={() => setIsOpen(!isOpen)}
+            >
               <SearchIcon className="w-5 h-5" />
             </Button>
             <Link href="/">
-              <Button size="icon" variant="ghost" className="w-7 h-7 cursor-pointer">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="w-7 h-7 cursor-pointer"
+              >
                 <SquarePen className="w-5 h-5" />
               </Button>
             </Link>
@@ -109,7 +121,7 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
                         variant="ghost"
                         className={`w-full justify-start py-6 cursor-pointer ${
                           isCollapsed ? "px-2" : ""
-                        } ${chat.id === currentChatId ? "bg-accent" : "" }`}
+                        } ${chat.id === currentChatId ? "bg-accent" : ""}`}
                         title={chat.title}
                       >
                         <MessageSquare
@@ -120,7 +132,7 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
                           <span className="text-xs text-muted-foreground">
                             {chat.createdAt
                               ? new Date(chat.createdAt).toLocaleDateString()
-                             : "No date available"}
+                              : "No date available"}
                           </span>
                         </div>
                       </Button>
@@ -132,10 +144,11 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
                   </p>
                 )}
                 {chatHistory && chatHistory.length === 10 && (
-                  <Link href="/history" className="text-sm text-muted-foreground flex items-center gap-2 mx-2 mt-3 hover:text-lime-600 dark:hover:text-lime">
-                    <span>
-                      Show more
-                    </span>
+                  <Link
+                    href="/history"
+                    className="text-sm text-muted-foreground flex items-center gap-2 mx-2 mt-3 hover:text-lime-600 dark:hover:text-lime"
+                  >
+                    <span>Show more</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 )}

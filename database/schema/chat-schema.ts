@@ -1,6 +1,6 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "./auth-schema";
-import { InferSelectModel } from "drizzle-orm";
+import { InferSelectModel, relations } from "drizzle-orm";
 
 export const chat = sqliteTable("chat", {
   id: text("id")
@@ -13,7 +13,7 @@ export const chat = sqliteTable("chat", {
   title: text("title").notNull(),
   userId: text("user_id")
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
   visibility: text("visibility", { enum: ["public", "private"] })
     .notNull()
     .default("private"),
@@ -37,3 +37,14 @@ export const message = sqliteTable("message", {
 });
 
 export type Message = InferSelectModel<typeof message>;
+
+export const chatRelations = relations(chat, ({ many }) => ({
+  messages: many(message)
+}));
+
+export const messageRelations = relations(message, ({ one }) => ({
+  chat: one(chat, {
+    fields: [message.chatId],
+    references: [chat.id],
+  })
+}));

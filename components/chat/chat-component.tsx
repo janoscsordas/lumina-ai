@@ -30,10 +30,8 @@ export default function ChatComponent({
           queryClient.invalidateQueries({
             queryKey: ["chat-history"],
           });
-
-          setTimeout(() => {
-            router.replace(`/chat/${id}`);
-          }, 300);
+          
+          router.replace(`/chat/${id}`);
         }
       },
       onError: (err) => {

@@ -1,7 +1,7 @@
 import { generateTitle } from "@/actions/chat.action";
 import { openrouter } from "@/lib/ai/model";
 import { systemPrompt } from "@/lib/ai/prompts";
-import { deleteChat, getChatById, saveChat, saveMessages } from "@/lib/db/queries";
+import { deleteChat, getAllChatHistory, getChatById, saveChat, saveMessages } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
 import { getMostRecentUserMessage, sanitizeResponseMessages } from "@/lib/utils";
 
@@ -10,6 +10,23 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const maxDuration = 60;
+
+export async function GET() {
+  const session = await getUserSession();
+
+  if (!session) {
+    return NextResponse.json({ error: "You are not logged in."}, { status: 401 });
+  }
+
+  try {
+    const chats = await getAllChatHistory({ userId: session.user.id });
+
+    return NextResponse.json({ chats }, { status: 200 });
+  } catch (error: unknown) {
+    console.error("Failed to get chats:", error);
+    return NextResponse.json({ error: "Failed to get chats!" }, { status: 500 });
+  }
+}
 
 export async function POST(request: Request) {
   const session = await getUserSession();
