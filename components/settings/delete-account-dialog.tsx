@@ -15,27 +15,35 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "react-hot-toast"
 import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { deleteUserAccount } from "@/actions/user.action"
 
 interface DeleteAccountDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  userId: string
 }
 
-export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
+export function DeleteAccountDialog({ open, onOpenChange, userId }: DeleteAccountDialogProps) {
+  const router = useRouter()
   const [confirmation, setConfirmation] = useState("")
   const [isDeleting, setIsDeleting] = useState(false)
 
   async function deleteAccount() {
     setIsDeleting(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    const { success, error } = await deleteUserAccount({ userId })
 
     setIsDeleting(false)
     onOpenChange(false)
 
-    toast("Account deleted")
-    
+    if (!success) {
+      toast.error(error)
+      return
+    }
+
+    toast.success("Account deleted successfully")
+    router.push("/")
   }
 
   const isConfirmed = confirmation.toLowerCase() === "delete"
@@ -52,7 +60,7 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="confirm">Type delete to confirm</Label>
+            <Label htmlFor="confirm">Type &quot;delete&quot; to confirm</Label>
             <Input
               id="confirm"
               value={confirmation}

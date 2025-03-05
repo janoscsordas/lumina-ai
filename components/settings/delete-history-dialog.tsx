@@ -13,25 +13,31 @@ import {
 import { Button } from "@/components/ui/button"
 import { toast } from "react-hot-toast"
 import { Loader2 } from "lucide-react"
+import { deleteChatHistory } from "@/actions/chat.action"
 
 interface DeleteHistoryDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  userId: string
 }
 
-export function DeleteHistoryDialog({ open, onOpenChange }: DeleteHistoryDialogProps) {
+export function DeleteHistoryDialog({ open, onOpenChange, userId }: DeleteHistoryDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   async function deleteHistory() {
     setIsDeleting(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const { success, error } = await deleteChatHistory({ userId })
 
     setIsDeleting(false)
     onOpenChange(false)
 
-    toast("Chat history deleted")
+    if (!success) {
+      toast.error(error)
+      return
+    }
+
+    toast.success("Chat history deleted successfully!")
   }
 
   return (

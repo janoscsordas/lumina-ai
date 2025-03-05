@@ -9,16 +9,28 @@ import { ChangeEvent } from "react";
 export default function AITextarea({
     value,
     setValue,
-    disabled
+    disabled,
+    onSubmit,
 }: {
     value: string;
     setValue: (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => void;
     disabled?: boolean;
+    onSubmit?: () => void;
 }) {
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 80,
         maxHeight: 200,
     });
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        // Submit form on Enter without Shift key
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // Prevent default to avoid new line
+            if (onSubmit && value.trim()) {
+                onSubmit();
+            }
+        }
+    };
 
     return (
         <div className="p-4 min-w-full">
@@ -32,6 +44,7 @@ export default function AITextarea({
                                 setValue(e);
                                 adjustHeight();
                             }}
+                            onKeyDown={handleKeyDown}
                             placeholder="Ask me anything..."
                             className={cn(
                                 "w-full px-4 py-3",

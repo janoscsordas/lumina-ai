@@ -1,9 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, Zap, Clock } from "lucide-react"
+import { MessageSquare } from "lucide-react"
+import { getUserMonthlyMessageCounts } from "@/lib/db/queries"
+import { FREE_TIER_MESSAGE_LIMIT } from "@/lib/utils"
 
-export function UsageStats() {
+export async function UsageStats({ userId }: { userId: string }) {
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth() + 1
+
+  // Fetch message counts for the current month
+  const messageCounts = await getUserMonthlyMessageCounts({ userId: userId, year: currentYear, month: currentMonth })
+
+  // Calculate the percentage of the message limit used
+  const percentageUsed = messageCounts ? (messageCounts / FREE_TIER_MESSAGE_LIMIT) * 100 : 0
+
   return (
     <>
       <Card>
@@ -18,30 +29,9 @@ export function UsageStats() {
                 <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>Messages</span>
               </div>
-              <span className="font-medium">1,245 / 5,000</span>
+              <span className={`font-medium ${messageCounts === FREE_TIER_MESSAGE_LIMIT && "text-red-500"}`}>{messageCounts} / {FREE_TIER_MESSAGE_LIMIT}</span>
             </div>
-            <Progress value={25} />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center">
-                <Zap className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span>Advanced Features</span>
-              </div>
-              <span className="font-medium">37 / 100</span>
-            </div>
-            <Progress value={37} />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center">
-                <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span>Response Time</span>
-              </div>
-              <span className="font-medium">0.8s avg</span>
-            </div>
+            <Progress value={percentageUsed} />
           </div>
         </CardContent>
       </Card>
@@ -57,16 +47,6 @@ export function UsageStats() {
               <div className="text-xs text-muted-foreground">Chat history is stored for 30 days</div>
             </div>
             <Badge variant="outline">Default</Badge>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <div className="font-medium">Model Training</div>
-              <div className="text-xs text-muted-foreground">Your data is not used for training</div>
-            </div>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              Disabled
-            </Badge>
           </div>
         </CardContent>
       </Card>

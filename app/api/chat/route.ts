@@ -1,9 +1,9 @@
 import { generateTitle } from "@/actions/chat.action";
 import { openrouter } from "@/lib/ai/model";
 import { systemPrompt } from "@/lib/ai/prompts";
-import { deleteChat, getAllChatHistory, getChatById, saveChat, saveMessages } from "@/lib/db/queries";
+import { deleteChat, getAllChatHistory, getChatById, getUserMonthlyMessageCounts, incrementMessageCounts, saveChat, saveMessages } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
-import { getMostRecentUserMessage, sanitizeResponseMessages } from "@/lib/utils";
+import { FREE_TIER_MESSAGE_LIMIT, getMostRecentUserMessage, sanitizeResponseMessages } from "@/lib/utils";
 
 import { createDataStreamResponse, streamText } from "ai";
 import { revalidatePath } from "next/cache";
@@ -33,6 +33,19 @@ export async function POST(request: Request) {
 
   if (!session) {
     return new Response("You are not logged in!", { status: 401 });
+  }
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  
+  const messageCount = await getUserMonthlyMessageCounts({
+    userId: session.user.id,
+    year: currentYear,
+    month: currentMonth,
+  });
+
+  if (messageCount && messageCount >= FREE_TIER_MESSAGE_LIMIT) {
+    return new Response("You have exceeded your message limit!", { status: 403 });
   }
 
   const { id, messages } = await request.json();
@@ -81,6 +94,11 @@ export async function POST(request: Request) {
                     createdAt: new Date().toISOString(),
                   };
                 }),
+              });
+
+              await incrementMessageCounts({
+                userId: session.user.id,
+                date: new Date(),
               });
             } catch (error) {
               console.error("Failed to save chat:", error);

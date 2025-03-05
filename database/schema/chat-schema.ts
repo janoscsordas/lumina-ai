@@ -1,4 +1,4 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { user } from "./auth-schema";
 import { InferSelectModel, relations } from "drizzle-orm";
 
@@ -30,7 +30,7 @@ export const message = sqliteTable("message", {
     .notNull()
     .references(() => chat.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
-  content: text("content", { mode: 'json' }).notNull(),
+  content: text("content", { mode: "json" }).notNull(),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
@@ -38,13 +38,38 @@ export const message = sqliteTable("message", {
 
 export type Message = InferSelectModel<typeof message>;
 
-export const chatRelations = relations(chat, ({ many }) => ({
-  messages: many(message)
+export const monthlyMessageCounts = sqliteTable("monthly_message_counts", {
+  id: text("id")
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  year: integer("year").notNull(),
+  month: integer("month").notNull(),
+  messageCount: integer("count").notNull().default(0),
+}, (table) => ({
+  uniqueUserMonthIdx: uniqueIndex("unique_user_month_idx")
+   .on(table.userId, table.year, table.month),
+}));
+
+export const userRelations = relations(user, ({ many }) => ({
+  chats: many(chat),
+  monthlyMessageCounts: many(monthlyMessageCounts),
+}));
+
+export const chatRelations = relations(chat, ({ one, many }) => ({
+  user: one(user, {
+    fields: [chat.userId],
+    references: [user.id],
+  }),
+  messages: many(message),
 }));
 
 export const messageRelations = relations(message, ({ one }) => ({
   chat: one(chat, {
     fields: [message.chatId],
     references: [chat.id],
-  })
+  }),
 }));

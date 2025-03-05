@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-    name: z.string().min(1, {
+    name: z.string().min(4, {
         message: "Name is required."
     }).max(32, {
         message: "Name must be less than 32 characters."

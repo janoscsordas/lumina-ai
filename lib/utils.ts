@@ -99,3 +99,5 @@ export function convertToUIMessages(
     return chatMessages;
   }, []);
 }
+
+export const FREE_TIER_MESSAGE_LIMIT = 250;

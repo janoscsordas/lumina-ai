@@ -76,6 +76,7 @@ export default function ChatComponent({
             value={input}
             setValue={handleInputChange}
             disabled={status === "streaming"}
+            onSubmit={handleSubmit}
           />
         </form>
       </div>

@@ -2,6 +2,9 @@
 
 import { generateText, Message } from 'ai';
 import { openrouter } from '@/lib/ai/model';
+import { getUserSession } from '@/lib/get-session';
+import { deleteChatHistoryQuery } from '@/lib/db/queries';
+import { revalidatePath } from 'next/cache';
 
 export async function generateTitle({
     message
@@ -19,4 +22,27 @@ export async function generateTitle({
     })
 
     return title
+}
+
+export async function deleteChatHistory({ userId }: { userId: string }) {
+    try {
+        const session = await getUserSession();
+
+        if (!session || session.user.id !== userId) {
+            throw new Error('Unauthorized');
+        }
+
+        await deleteChatHistoryQuery({ userId });
+    } catch (error) {
+        return {
+            success: false,
+            error: (error as Error).message,
+        }
+    }
+
+    revalidatePath('/');
+    return {
+        success: true,
+        error: null,
+    }
 }
