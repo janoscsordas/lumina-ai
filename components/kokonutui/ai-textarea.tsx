@@ -62,6 +62,7 @@ export default function AITextarea({
                                 outline: "none",
                             }}
                             disabled={disabled}
+                            autoFocus
                         />
                     </div>
 

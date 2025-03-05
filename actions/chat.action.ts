@@ -5,6 +5,7 @@ import { openrouter } from '@/lib/ai/model';
 import { getUserSession } from '@/lib/get-session';
 import { deleteChatHistoryQuery } from '@/lib/db/queries';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 export async function generateTitle({
     message
@@ -22,6 +23,11 @@ export async function generateTitle({
     })
 
     return title
+}
+
+export async function saveChatModelAsCookie(model: string) {
+    const cookieStore = await cookies();
+    cookieStore.set('chat-model', model);
 }
 
 export async function deleteChatHistory({ userId }: { userId: string }) {

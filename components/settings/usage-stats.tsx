@@ -44,7 +44,7 @@ export async function UsageStats({ userId }: { userId: string }) {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <div className="font-medium">Data Retention</div>
-              <div className="text-xs text-muted-foreground">Chat history is stored for 30 days</div>
+              <div className="text-xs text-muted-foreground">Chat history is stored in our database.</div>
             </div>
             <Badge variant="outline">Default</Badge>
           </div>
