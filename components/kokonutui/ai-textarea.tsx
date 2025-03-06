@@ -28,6 +28,7 @@ export default function AITextarea({
             e.preventDefault(); // Prevent default to avoid new line
             if (onSubmit && value.trim()) {
                 onSubmit();
+                adjustHeight(true);
             }
         }
     };

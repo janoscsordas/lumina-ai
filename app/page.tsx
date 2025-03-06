@@ -1,4 +1,5 @@
 import ChatComponent from "@/components/chat/chat-component";
+import MobileNavbar from "@/components/mobile-navbar";
 import Sidebar from "@/components/sidebar";
 import { getUserSession } from "@/lib/get-session";
 import { generateUUID } from "@/lib/utils";
@@ -9,6 +10,7 @@ export default async function Home() {
 
   return (
     <main className="w-full min-h-screen flex gap-2">
+      <MobileNavbar user={session ? session?.user : null} />
       <Sidebar user={session ? session?.user : null} />
       <ChatComponent id={id} initialMessages={[]} />
     </main>

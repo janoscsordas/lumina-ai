@@ -1,4 +1,5 @@
 import ChatWrapper from "@/components/chat/chat-wrapper";
+import MobileNavbar from "@/components/mobile-navbar";
 import Sidebar from "@/components/sidebar";
 import { getChatById } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
@@ -28,6 +29,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   return (
     <main className="w-full min-h-screen flex gap-2">
+      <MobileNavbar user={session ? session?.user : null} />
       <Sidebar user={session ? session?.user : null} currentChatId={chat.id} />
       <ChatWrapper id={chat.id} />
     </main>

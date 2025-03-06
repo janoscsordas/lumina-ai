@@ -58,7 +58,7 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
   const chatHistory = chats;
 
   return (
-    <div className={`relative`}>
+    <div className={`relative hidden xl:block`}>
       {/* Toggle button */}
       <Button
         variant="ghost"
