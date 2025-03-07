@@ -20,7 +20,7 @@ export async function UsageStats({ userId }: { userId: string }) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium">Usage Statistics</CardTitle>
-          <CardDescription>Your current usage this month</CardDescription>
+          <CardDescription>Your current usage this month. Resets at the start of the next month.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">

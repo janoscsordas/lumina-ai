@@ -119,7 +119,7 @@ const CodeBlock = ({
       : childrenTakeAllStringContents(children);
 
   const preClass = cn(
-    "overflow-x-scroll rounded-md border bg-background/50 p-4 font-mono text-sm [scrollbar-width:none]",
+    "overflow-x-scroll rounded-md border bg-background/50 p-4 font-mono text-sm [scrollbar-width:none] max-w-[calc(100vw-25rem)] 2xl:w-auto",
     className
   );
 
@@ -166,9 +166,9 @@ function childrenTakeAllStringContents(element: any): string {
 }
 
 const COMPONENTS = {
-  h1: withClass("h1", "text-2xl font-semibold"),
-  h2: withClass("h2", "font-semibold text-xl"),
-  h3: withClass("h3", "font-semibold text-lg"),
+  h1: withClass("h1", "text-xl lg:text-2xl font-semibold"),
+  h2: withClass("h2", "font-semibold text-lg lg:text-xl"),
+  h3: withClass("h3", "font-semibold text-base lg:text-lg"),
   h4: withClass("h4", "font-semibold text-base"),
   h5: withClass("h5", "font-medium"),
   strong: withClass("strong", "font-semibold"),

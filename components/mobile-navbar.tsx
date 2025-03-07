@@ -34,6 +34,9 @@ export default function MobileNavbar({ user }: { user: User | null }) {
                             <Link href="/">
                                 <DropdownMenuItem>New Chat</DropdownMenuItem>
                             </Link>
+                            <Link href="/history">
+                                <DropdownMenuItem>Your Chat History</DropdownMenuItem>
+                            </Link>
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>

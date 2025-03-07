@@ -113,7 +113,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   return (
     <div className={cn("flex flex-col", isUser ? "items-end" : "items-start")}>
       <div className={cn(chatBubbleVariants({ isUser, animation }), className)}>
-        <div>
+        <div className="max-w-[calc(100vw-6rem)] 2xl:max-w-[calc(100vw-55rem)]">
           <MarkdownRenderer>{content}</MarkdownRenderer>
         </div>
 

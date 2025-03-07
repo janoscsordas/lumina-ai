@@ -46,9 +46,9 @@ export default function ChatComponent({
   }, [messages]);
 
   return (
-    <section className="w-full relative pt-8 2xl:pt-6">
+    <section className="w-[98%] relative pt-6 xl:pt-4">
       <div className="flex flex-col w-[98%] md:w-[95%] 2xl:w-2/3 h-full mx-auto">
-        <ScrollArea className="h-1 flex-grow overflow-y-auto pt-6 flex flex-col gap-8 px-4">
+        <ScrollArea className="h-1 flex-grow overflow-y-auto pt-6 px-4">
           {messages.map((m) => (
             <ChatMessage
               key={m.id}
