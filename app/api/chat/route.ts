@@ -1,5 +1,5 @@
 import { generateTitle } from "@/actions/chat.action";
-import { openrouter } from "@/lib/ai/model";
+import { languageModel } from "@/lib/ai/model";
 import { systemPrompt } from "@/lib/ai/prompts";
 import { deleteChat, getAllChatHistory, getChatById, getUserMonthlyMessageCounts, incrementMessageCounts, saveChat, saveMessages } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
-        model: openrouter("meta-llama/llama-3.3-70b-instruct:free"),
+        model: languageModel,
         system: systemPrompt(),
         messages,
         maxSteps: 5,

@@ -1,7 +1,7 @@
 'use server';
 
 import { generateText, Message } from 'ai';
-import { openrouter } from '@/lib/ai/model';
+import { languageModel } from '@/lib/ai/model';
 import { getUserSession } from '@/lib/get-session';
 import { deleteChatHistoryQuery } from '@/lib/db/queries';
 import { revalidatePath } from 'next/cache';
@@ -13,7 +13,7 @@ export async function generateTitle({
     message: Message;
 }) {
     const { text: title } = await generateText({
-        model: openrouter("meta-llama/llama-3.3-70b-instruct:free"),
+        model: languageModel,
         system: `\n
             - you will generate a short title based on the first message a user begins a conversation with
             - ensure it is not more than 80 characters long
