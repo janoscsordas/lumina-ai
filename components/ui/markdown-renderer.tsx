@@ -119,7 +119,7 @@ const CodeBlock = ({
       : childrenTakeAllStringContents(children);
 
   const preClass = cn(
-    "overflow-x-scroll rounded-md border bg-background/50 p-4 font-mono text-sm [scrollbar-width:none] max-w-[calc(100vw-25rem)] 2xl:w-auto",
+    "overflow-x-scroll rounded-md border bg-background/50 p-4 font-mono text-sm [scrollbar-width:none]",
     className
   );
 

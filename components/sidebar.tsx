@@ -63,7 +63,7 @@ const Sidebar = ({ user, currentChatId }: SidebarProps) => {
       <Button
         variant="ghost"
         size="sm"
-        className="absolute -right-15 top-5.5 flex justify-center z-10 items-center border shadow-md bg-background"
+        className="absolute -right-12 top-5.5 flex justify-center z-10 items-center border shadow-md bg-background"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         {isCollapsed ? (

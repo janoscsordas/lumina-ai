@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 
 const chatBubbleVariants = cva(
-  "group/message relative break-words rounded-lg p-3 text-sm sm:max-w-[70%]",
+  "group/message relative break-words rounded-lg p-3 text-sm max-w-[95%] sm:max-w-[70%]",
   {
     variants: {
       isUser: {
@@ -89,7 +89,7 @@ export interface ChatMessageProps extends Message {
   className?: string
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({
+export const ChatMessage = React.memo(function ChatMessage({
   role,
   content,
   createdAt,
@@ -98,7 +98,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   actions,
   className,
   toolInvocations,
-}) => {
+}: ChatMessageProps) {
   if (toolInvocations && toolInvocations.length > 0) {
     return <ToolCall toolInvocations={toolInvocations} />
   }
@@ -113,7 +113,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   return (
     <div className={cn("flex flex-col", isUser ? "items-end" : "items-start")}>
       <div className={cn(chatBubbleVariants({ isUser, animation }), className)}>
-        <div className="max-w-[calc(100vw-6rem)] 2xl:max-w-[calc(100vw-55rem)]">
+        <div>
           <MarkdownRenderer>{content}</MarkdownRenderer>
         </div>
 
@@ -137,7 +137,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
       ) : null}
     </div>
   )
-}
+})
 
 function ToolCall({
   toolInvocations,
