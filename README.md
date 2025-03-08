@@ -1,3 +1,3 @@
 # Todo
 
-- [  ] Make chat messages responsive
+- [  ] Add chat model selection, and save selection in cookie
