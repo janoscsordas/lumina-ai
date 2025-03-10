@@ -6,9 +6,10 @@ interface ChatInputProps {
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void;
     handleSubmit: () => void;
     status: "submitted" | "streaming" | "ready" | "error";
+    selectedChatModel: string | undefined;
 }
 
-export const ChatInput = memo(({ input, handleInputChange, handleSubmit, status }: ChatInputProps) => {
+export const ChatInput = memo(({ input, handleInputChange, handleSubmit, status, selectedChatModel }: ChatInputProps) => {
     return (
         <form onSubmit={handleSubmit}>
           <AITextarea
@@ -16,6 +17,7 @@ export const ChatInput = memo(({ input, handleInputChange, handleSubmit, status 
             setValue={handleInputChange}
             disabled={status === "streaming"}
             onSubmit={handleSubmit}
+            selectedChatModel={selectedChatModel}
           />
         </form>
     )

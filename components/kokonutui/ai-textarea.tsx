@@ -3,19 +3,22 @@
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea";
-import { ArrowUpCircle, Paperclip, Globe, Figma } from "lucide-react";
+import { ArrowUpCircle } from "lucide-react";
 import { ChangeEvent } from "react";
+import ModelSelector from "../chat/model-selector";
 
 export default function AITextarea({
     value,
     setValue,
     disabled,
     onSubmit,
+    selectedChatModel
 }: {
     value: string;
     setValue: (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => void;
     disabled?: boolean;
     onSubmit?: () => void;
+    selectedChatModel: string | undefined;
 }) {
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 80,
@@ -69,25 +72,8 @@ export default function AITextarea({
 
                     <div className="h-14">
                         <div className="absolute left-3 right-3 bottom-3 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    className="p-2 text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors rounded-lg border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20"
-                                >
-                                    <Paperclip className="w-4 h-4" />
-                                </button>
-                                <button
-                                    type="button"
-                                    className="p-2 text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors rounded-lg border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20"
-                                >
-                                    <Globe className="w-4 h-4 text-blue-500" />
-                                </button>
-                                <button
-                                    type="button"
-                                    className="p-2 text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors rounded-lg border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20"
-                                >
-                                    <Figma className="w-4 h-4 text-pink-500" />
-                                </button>
+                            <div className="flex items-center">
+                                <ModelSelector selectedChatModel={selectedChatModel} />
                             </div>
                             <button
                                 type="submit"

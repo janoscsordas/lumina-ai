@@ -1,5 +1,6 @@
-import { generateTitle } from "@/actions/chat.action";
+import { generateTitle, getChatModelFromCookie } from "@/actions/chat.action";
 import { languageModel } from "@/lib/ai/model";
+import { aiModels } from "@/lib/ai/models";
 import { systemPrompt } from "@/lib/ai/prompts";
 import { deleteChat, getAllChatHistory, getChatById, getUserMonthlyMessageCounts, incrementMessageCounts, saveChat, saveMessages } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
@@ -34,6 +35,8 @@ export async function POST(request: Request) {
   if (!session) {
     return new Response("You are not logged in!", { status: 401 });
   }
+
+  const chatModel = await getChatModelFromCookie();
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
@@ -72,8 +75,8 @@ export async function POST(request: Request) {
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
-        model: languageModel,
-        system: systemPrompt(),
+        model: languageModel(chatModel || aiModels[0].id),
+        system: systemPrompt(session.user.name),
         messages,
         maxSteps: 5,
         onFinish: async ({ response, reasoning }) => {

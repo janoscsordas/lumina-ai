@@ -13,9 +13,11 @@ import { ChatInput } from "./chat-input";
 export default function ChatComponent({
   id,
   initialMessages,
+  selectedChatModel,
 }: {
   id: string;
   initialMessages: Array<Message>;
+  selectedChatModel: string | undefined;
 }) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -71,7 +73,7 @@ export default function ChatComponent({
               "An error occurred while processing your request."}
           </div>
         )}
-        <ChatInput input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit} status={status} />
+        <ChatInput selectedChatModel={selectedChatModel} input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit} status={status} />
       </div>
     </section>
   );
