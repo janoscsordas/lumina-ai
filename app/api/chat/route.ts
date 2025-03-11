@@ -8,7 +8,7 @@ import { FREE_TIER_MESSAGE_LIMIT, getMostRecentUserMessage, sanitizeResponseMess
 
 import { createDataStreamResponse, streamText } from "ai";
 import { revalidatePath } from "next/cache";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 60;
 
@@ -29,11 +29,11 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const session = await getUserSession();
 
   if (!session) {
-    return new Response("You are not logged in!", { status: 401 });
+    return NextResponse.json("You are not logged in!", { status: 401 });
   }
 
   const chatModel = await getChatModelFromCookie();
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   });
 
   if (messageCount && messageCount >= FREE_TIER_MESSAGE_LIMIT) {
-    return new Response("You have exceeded your message limit!", { status: 403 });
+    return NextResponse.json("You have exceeded your message limit!", { status: 403 });
   }
 
   const { id, messages } = await request.json();
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
   const userMessage = getMostRecentUserMessage(messages);
 
   if (!userMessage) {
-    return new Response("No messages in the chat!", { status: 400 });
+    return NextResponse.json("No messages in the chat!", { status: 400 });
   }
 
   const chat = await getChatById({ id });
@@ -79,6 +79,7 @@ export async function POST(request: Request) {
         system: systemPrompt(session.user.name),
         messages,
         maxSteps: 5,
+        abortSignal: request.signal,
         onFinish: async ({ response, reasoning }) => {
           if (session.user?.id) {
             try {
@@ -110,7 +111,17 @@ export async function POST(request: Request) {
         },
       });
 
-      result.consumeStream();
+      (async () => {
+        try {
+          await result.consumeStream();
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            console.log("Stream was aborted by the user");
+            return;
+          }
+          console.error('Error consuming stream: ', error);
+        }
+      })();
 
       result.mergeIntoDataStream(dataStream, {
         sendReasoning: true,

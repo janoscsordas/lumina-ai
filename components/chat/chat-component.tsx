@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ChatMessage } from "../ui/chat-message";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { ChatInput } from "./chat-input";
 
 export default function ChatComponent({
@@ -23,23 +23,36 @@ export default function ChatComponent({
   const router = useRouter();
   const bottomDivRef = useRef<HTMLDivElement>(null);
 
-  const { messages, input, handleInputChange, handleSubmit, error, status } =
-    useChat({
-      id,
-      initialMessages,
-      onFinish: () => {
-        if (!initialMessages || initialMessages.length === 0) {
-          queryClient.invalidateQueries({
-            queryKey: ["chat-history"],
-          });
-          
-          router.replace(`/chat/${id}`);
-        }
-      },
-      onError: (err) => {
-        toast.error(err.message);
-      },
-    });
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    error,
+    status,
+    stop,
+  } = useChat({
+    id,
+    initialMessages,
+    onFinish: () => {
+      if (!initialMessages || initialMessages.length === 0) {
+        queryClient.invalidateQueries({
+          queryKey: ["chat-history"],
+        });
+
+        router.replace(`/chat/${id}`);
+      }
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+
+  const handleStop = useCallback(() => {
+    if (typeof stop === 'function') {
+      stop();
+    }
+  }, [stop]);
 
   useEffect(() => {
     if (bottomDivRef.current) {
@@ -73,7 +86,14 @@ export default function ChatComponent({
               "An error occurred while processing your request."}
           </div>
         )}
-        <ChatInput selectedChatModel={selectedChatModel} input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit} status={status} />
+        <ChatInput
+          selectedChatModel={selectedChatModel}
+          input={input}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          status={status}
+          stop={handleStop}
+        />
       </div>
     </section>
   );
