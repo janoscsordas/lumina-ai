@@ -3,6 +3,7 @@
 import {
   ChevronsUpDown,
   HistoryIcon,
+  LogOutIcon,
   SettingsIcon,
 } from "lucide-react"
 
@@ -28,7 +29,11 @@ import {
 } from "@/components/ui/sidebar"
 import { User } from "better-auth"
 import Link from "next/link"
-import SignOut from "./auth/sign-out"
+import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
+import { authClient } from "@/lib/auth-client"
 
 export function NavUser({
   user,
@@ -36,6 +41,39 @@ export function NavUser({
   user: User | undefined
 }) {
   const { isMobile } = useSidebar()
+
+  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsLoading(true);
+
+      try {
+        toast.promise(async () => {
+          await authClient.signOut();
+          router.push("/");
+  
+          setTimeout(async () => {
+            await queryClient.invalidateQueries({
+              queryKey: ["chat-history"],
+            });
+            window.location.reload();
+          }, 300)
+        }, {
+          loading: "Signing out...",
+          success: "Signed out successfully",
+          error: "Sign out failed",
+        });
+      } catch (error: unknown) {
+          if (error instanceof Error) {
+            toast.error(error.message);
+          }
+      } finally {
+          setIsLoading(false);
+      }
+  };
 
   return (
     <SidebarMenu>
@@ -48,7 +86,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.image || ""} alt={user?.name} />
-                <AvatarFallback className="rounded-lg">{user?.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{user?.name.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user?.name}</span>
@@ -67,7 +105,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user?.image || ""} alt={user?.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{user?.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user?.name}</span>
@@ -91,7 +129,10 @@ export function NavUser({
               </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <SignOut />
+            <DropdownMenuItem onClick={handleLogout} disabled={isLoading}>
+              <LogOutIcon />
+              {isLoading ? "Logging out..." : "Log out"}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

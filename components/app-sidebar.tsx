@@ -24,8 +24,10 @@ import { Skeleton } from "./ui/skeleton";
 import { NavUser } from "./nav-user";
 import SearchMenu from "./search-menu";
 import { Button } from "./ui/button";
+import { useParams } from "next/navigation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const params = useParams<{ id?: string }>();
   const { data: session, isPending } = authClient.useSession();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -84,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu className="gap-2">
               {!isLoading ? chatHistory && chatHistory.length > 0 ? chatHistory.map((chat) => (
                 <SidebarMenuItem key={chat.id} title={chat.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild className={`${params.id === chat.id && "bg-muted"}`}>
                     <Link href={`/chat/${chat.id}`} className="font-medium truncate text-ellipsis">
                       {chat.title}
                     </Link>
@@ -109,14 +111,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {!isPending ? session?.user ? (
           <NavUser user={session?.user} />
         ) : (
-          <div className="flex w-full justify-evenly items-center gap-2">
+          <div className="flex w-full justify-center items-center gap-2">
             <Link href="/login">
-              <Button variant="ghost">
+              <Button variant="ghost" className="w-full">
                 Login
               </Button>
             </Link>
             <Link href="/register">
-              <Button variant="outline">
+              <Button variant="outline" className="w-full">
                 Register
               </Button>
             </Link>

@@ -65,7 +65,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
         >
           <Avatar className="w-8 h-8">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+            <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
@@ -73,7 +73,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
         <DropdownMenuLabel className="flex items-center gap-3">
           <Avatar className="w-8 h-8">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+            <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex min-w-0 flex-col">
             <span className="text-foreground truncate text-sm font-medium">
