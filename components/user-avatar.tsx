@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,16 +60,14 @@ export default function UserAvatar({ user }: UserAvatarProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="rounded-full cursor-pointer flex justify-center items-center"
+        <button
+          className="rounded-full cursor-pointer flex justify-center items-center outline-none focus:outline-none"
         >
           <Avatar className="w-8 h-8">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
             <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
           </Avatar>
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64">
         <DropdownMenuLabel className="flex items-center gap-3">

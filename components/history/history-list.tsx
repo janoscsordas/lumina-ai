@@ -46,11 +46,11 @@ export default function HistoryList({
     }
 
     return (
-        <div className="w-full mx-auto p-4">
+        <div className="w-full mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-x-4 place-items-center">
             {chatHistory.length > 0 ? chatHistory.map((chat) => (
                 <Card
                     key={chat.id}
-                    className="w-full transition-all border border-border dark:hover:border-lime group my-2"
+                    className="w-full transition-all border border-border dark:hover:border-lime group my-1"
                 >
                     <CardContent className="flex items-center justify-between">
                         <div className="flex flex-col">

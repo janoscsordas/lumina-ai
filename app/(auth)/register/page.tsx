@@ -4,8 +4,8 @@ import RegisterForm from "./register-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import GithubLogin from "../github-login";
-import AuthHeader from "../auth-header";
 import Link from "next/link";
+import { BotIcon } from "lucide-react";
 
 export default async function Register() {
   const session = await getUserSession();
@@ -15,15 +15,16 @@ export default async function Register() {
   }
 
   return (
-    <main className="w-full flex flex-col gap-4 justify-center items-center min-h-screen relative py-16">
-        <AuthHeader />
+    <main className="w-full flex flex-col gap-4 justify-center items-center min-h-svh relative p-6 md:p-10">
         <div className="dotted-background absolute top-0 left-0 w-full h-full overflow-hidden" />
-        <div className="glow-circle top-[25%] left-1/2 transform -translate-y-[25%] -translate-x-1/2" />
-        <h1 className="text-2xl font-bold">Lumina AI</h1>
+        <Link href="/" className="text-lg flex items-center gap-2">
+          <BotIcon />
+          <span className="font-semibold">Lumina AI</span>
+        </Link>
         <Card className="w-[365px] bg-card">
           <CardHeader>
-            <CardTitle>Register</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-center">Register</CardTitle>
+            <CardDescription className="text-center">
               Create an account to start chatting.
             </CardDescription>
           </CardHeader>

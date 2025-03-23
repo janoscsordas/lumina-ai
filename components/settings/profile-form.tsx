@@ -82,7 +82,7 @@ export function ProfileForm({ user }: { user: User }) {
           <Input type="email" readOnly defaultValue={user.email} className="mt-1 mb-2" disabled />
           <p className="text-sm text-muted-foreground">For security reasons, you can&apos;t change your email address.</p>
 
-          <Button type="submit" className="cursor-pointer">Update profile</Button>
+          <Button type="submit" className="cursor-pointer" variant="outline">Update profile</Button>
         </form>
       </Form>
 

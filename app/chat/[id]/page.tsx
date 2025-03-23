@@ -1,6 +1,7 @@
+import AppHeader from "@/components/app-header";
+import { AppSidebar } from "@/components/app-sidebar";
 import ChatWrapper from "@/components/chat/chat-wrapper";
-import MobileNavbar from "@/components/mobile-navbar";
-import Sidebar from "@/components/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getChatById } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/get-session";
 import { notFound } from "next/navigation";
@@ -28,10 +29,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   }
 
   return (
-    <main className="w-full min-h-screen flex gap-2">
-      <MobileNavbar user={session ? session?.user : null} />
-      <Sidebar user={session ? session?.user : null} currentChatId={chat.id} />
-      <ChatWrapper id={chat.id} />
-    </main>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <AppHeader />
+        <ChatWrapper id={chat.id} />
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

@@ -61,8 +61,8 @@ export default function ChatComponent({
   }, [messages]);
 
   return (
-    <section className="w-[98%] relative pt-12 xl:pt-4">
-      <div className="flex flex-col w-[98%] md:w-[95%] 2xl:w-2/3 h-full mx-auto">
+    <section className="w-[98%] relative">
+      <div className="flex flex-col w-[98%] md:w-[95%] 2xl:w-2/3 min-h-screen mx-auto pt-2">
         <ScrollArea className="h-1 flex-grow px-4 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground dark:[&::-webkit-scrollbar-track]:bg-transparent">
           {messages.map((m) => (
             <ChatMessage

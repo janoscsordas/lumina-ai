@@ -1,12 +1,12 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { Button } from "../ui/button";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
+import { LogOut } from "lucide-react";
 
 export default function SignOut() {
     const queryClient = useQueryClient();
@@ -36,14 +36,16 @@ export default function SignOut() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Button variant="destructive" disabled={isLoading}>
-                {isLoading ? (
-                    <>
-                        <Loader2Icon className="animate-spin" />
-                        <span>Signing Out...</span>
-                    </>
-                ) : <span>Sign Out</span>}
-            </Button>
+            <DropdownMenuItem>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="flex items-center w-full"
+                >
+                    <LogOut className="mr-2" />
+                    {isLoading ? "Logging out..." : "Log out"}
+                </button>
+            </DropdownMenuItem>
         </form>
     )
 }

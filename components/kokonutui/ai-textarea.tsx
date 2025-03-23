@@ -43,7 +43,7 @@ export default function AITextarea({
   return (
     <div className="p-4 min-w-full">
       <div className="relative">
-        <div className="relative flex flex-col border border-black/10 dark:border-white/10 rounded-xl">
+        <div className="relative flex flex-col border border-border rounded-xl">
           <div className="overflow-y-auto">
             <Textarea
               ref={textareaRef}
@@ -97,7 +97,7 @@ export default function AITextarea({
                   className={cn(
                     "p-2 transition-colors",
                     value.trim()
-                      ? "text-lime-600 dark:text-lime hover:dark:text-lime-700 hover:text-lime-600"
+                      ? "text-primary-foreground"
                       : "text-black/30 dark:text-white/30"
                   )}
                 >

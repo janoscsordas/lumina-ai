@@ -85,7 +85,7 @@ export default function LoginForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full bg-muted text-foreground hover:bg-muted cursor-pointer" disabled={isSubmitting}>
                     {isSubmitting ? (
                         <>
                             <Loader2Icon className="animate-spin mr-2" />
