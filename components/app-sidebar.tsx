@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react"
-import { Loader2Icon, SearchIcon, SquarePen } from "lucide-react"
+import { ArrowRight, Loader2Icon, SquarePen } from "lucide-react"
 
 import {
   Sidebar,
@@ -15,21 +15,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { Chat } from "@/database/schema/chat-schema";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import { NavUser } from "./nav-user";
-import SearchMenu from "./search-menu";
 import { Button } from "./ui/button";
 import { useParams } from "next/navigation";
+import ChatActions from "./sidebar-actions/chat-actions";
+
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  
   const params = useParams<{ id?: string }>();
   const { data: session, isPending } = authClient.useSession();
-  const [isOpen, setIsOpen] = useState(false);
 
   const { data: chats, isLoading } = useQuery({
     queryKey: ["chat-history"],
@@ -66,10 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem className="flex items-center justify-between px-2 pt-2">
             <h1 className="font-semibold">Lumina AI</h1>
             <div className="flex items-center gap-2">
-              <SearchMenu open={isOpen} setOpen={setIsOpen} />
-              <Button className="w-6 h-6 flex items-center justify-center" onClick={() => setIsOpen(!isOpen)} variant="ghost" size="icon">
-                <SearchIcon className="w-4 h-4" />
-              </Button>
               <Link href="/">
                 <Button className="w-6 h-6 flex items-center justify-center" variant="ghost" size="icon">
                   <SquarePen className="w-4 h-4" />
@@ -85,12 +81,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
               {!isLoading ? chatHistory && chatHistory.length > 0 ? chatHistory.map((chat) => (
-                <SidebarMenuItem key={chat.id} title={chat.title}>
+                <SidebarMenuItem key={chat.id} title={chat.title} className="group relative">
                   <SidebarMenuButton asChild className={`${params.id === chat.id && "bg-muted"}`}>
                     <Link href={`/chat/${chat.id}`} className="font-medium truncate text-ellipsis">
                       {chat.title}
                     </Link>
                   </SidebarMenuButton>
+                  <ChatActions chat={chat} />
                 </SidebarMenuItem>
               )) : (
                 session?.user ? (
@@ -102,6 +99,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Skeleton className="w-full justify-start py-8 mt-2">
                   <Loader2Icon className="w-5 h-5 animate-spin mx-auto" />
                 </Skeleton>
+              )}
+              {session?.user && chatHistory && chatHistory.length > 0 && (
+                <SidebarMenuItem className="px-2 text-muted-foreground text-sm">
+                  <Link href="/history" className="hover:underline flex items-center gap-2">
+                    View all <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </SidebarMenuItem>
               )}
             </SidebarMenu>
           </SidebarGroupContent>

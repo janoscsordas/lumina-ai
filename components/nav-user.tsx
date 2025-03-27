@@ -4,7 +4,9 @@ import {
   ChevronsUpDown,
   HistoryIcon,
   LogOutIcon,
+  Moon,
   SettingsIcon,
+  Sun,
 } from "lucide-react"
 
 import {
@@ -34,12 +36,17 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { authClient } from "@/lib/auth-client"
+import { useTheme } from "next-themes"
+import { cn } from "@/lib/utils"
 
 export function NavUser({
   user,
 }: {
   user: User | undefined
 }) {
+  const { resolvedTheme, setTheme } = useTheme()
+  const isDark = resolvedTheme === "dark"
+  
   const { isMobile } = useSidebar()
 
   const queryClient = useQueryClient();
@@ -133,6 +140,64 @@ export function NavUser({
               <LogOutIcon />
               {isLoading ? "Logging out..." : "Log out"}
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="p-2 font-medium text-muted-foreground text-xs">
+                Preferences
+              </DropdownMenuLabel>
+              <div className="flex items-center justify-between gap-2 px-2 pb-1 text-left text-sm">
+                <span className="truncate">Theme</span>
+                  <div
+                    className="flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300 bg-sidebar border border-muted"
+                    onClick={() => setTheme(isDark ? "light" : "dark")}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="flex justify-between items-center w-full">
+                      <div
+                        className={cn(
+                          "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
+                          isDark 
+                            ? "transform translate-x-0 bg-muted" 
+                            : "transform translate-x-8 bg-muted"
+                        )}
+                      >
+                        {isDark ? (
+                          <Moon 
+                            className="w-4 h-4 text-white" 
+                            strokeWidth={1.5}
+                          />
+                        ) : (
+                          <Sun 
+                            className="w-4 h-4 text-gray-700" 
+                            strokeWidth={1.5}
+                          />
+                        )}
+                      </div>
+                      <div
+                        className={cn(
+                          "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
+                          isDark 
+                            ? "bg-transparent" 
+                            : "transform -translate-x-8"
+                        )}
+                      >
+                        {isDark ? (
+                          <Sun 
+                            className="w-4 h-4 text-gray-500" 
+                            strokeWidth={1.5}
+                          />
+                        ) : (
+                          <Moon 
+                            className="w-4 h-4 text-black" 
+                            strokeWidth={1.5}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

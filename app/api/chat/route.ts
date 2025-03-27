@@ -156,6 +156,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to delete chat!" }, { status: 500 });
   }
 
-  revalidatePath("/history");
+  revalidatePath('/history')
   return NextResponse.json({ message: "Chat deleted successfully!" }, { status: 200 });
 }
