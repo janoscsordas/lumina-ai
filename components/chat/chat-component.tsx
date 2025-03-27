@@ -74,7 +74,7 @@ export default function ChatComponent({
             />
           ))}
           {status === "submitted" && (
-            <TextShimmer className="font-mono justify-start mt-3" duration={1}>
+            <TextShimmer className="font-mono font-medium justify-start text-sm ml-3 mt-3" duration={1}>
               Thinking...
             </TextShimmer>
           )}
