@@ -5,37 +5,41 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Chat } from "@/database/schema/chat-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 
 export default function ChatActions({ chat }: { chat: Chat }) {
+    const pathName = usePathname()
     const queryClient = useQueryClient()
     const { isMobile } = useSidebar();
     const router = useRouter();
 
     const deleteMutation = useMutation({
-        mutationFn: (id: string) => {
-            return fetch("/api/chat", {
-                method: "DELETE",
-                body: JSON.stringify({ id })
-            })
-        }
-    })
-
-    const handleDelete = () => {
-        deleteMutation.mutate(chat.id)
-
-        if (deleteMutation.error) {
-            toast.error(deleteMutation.error.message)
-            return
-        }
-        
-        queryClient.invalidateQueries({
-            queryKey: ["chat-history"]
-        })
-        router.push("/")
-        toast.success("Chat history deleted successfully!")
-    }
+        mutationFn: async (id: string) => {
+          const res = await fetch("/api/chat", {
+            method: "DELETE",
+            body: JSON.stringify({ id }),
+          });
+      
+          if (!res.ok) throw new Error("Failed to delete chat");
+      
+          return res;
+        },
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ["chat-history"] });
+      
+          if (pathName !== "/") {
+            router.push("/");
+          } else {
+            router.refresh();
+          }
+      
+          toast.success("Chat deleted successfully!");
+        },
+        onError: (error: unknown) => {
+          toast.error(error instanceof Error ? error.message : "Something went wrong.");
+        },
+    });
 
     return (
         <AlertDialog>
@@ -81,7 +85,7 @@ export default function ChatActions({ chat }: { chat: Chat }) {
                     <AlertDialogCancel>
                         Cancel
                     </AlertDialogCancel>
-                    <AlertDialogAction className="text-red-100 bg-red-700 hover:bg-red-800" onClick={handleDelete}>
+                    <AlertDialogAction className="text-red-100 bg-red-700 hover:bg-red-800" onClick={() => deleteMutation.mutate(chat.id)}>
                         {deleteMutation.isPending ? "Deleting..." : "Delete"}
                     </AlertDialogAction>
                 </AlertDialogFooter>

@@ -65,7 +65,7 @@ export function NavUser({
           setTimeout(async () => {
             await queryClient.invalidateQueries({
               queryKey: ["chat-history"],
-            });
+            })
             window.location.reload();
           }, 300)
         }, {
