@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { user } from "./auth-schema";
 import { InferSelectModel, relations } from "drizzle-orm";
 
@@ -17,6 +17,7 @@ export const chat = sqliteTable("chat", {
   visibility: text("visibility", { enum: ["public", "private"] })
     .notNull()
     .default("private"),
+  isFavorite: integer("is_favorite", { mode: "boolean" }).notNull().default(false)
 });
 
 export type Chat = InferSelectModel<typeof chat>;
@@ -53,6 +54,18 @@ export const monthlyMessageCounts = sqliteTable("monthly_message_counts", {
   uniqueUserMonthIdx: uniqueIndex("unique_user_month_idx")
    .on(table.userId, table.year, table.month),
 }));
+
+export const vote = sqliteTable("vote", {
+  chatId: text("chat_id").notNull().references(() => chat.id, { onDelete: "cascade" }),
+  messageId: text("message_id").notNull().references(() => message.id, { onDelete: "cascade" }),
+  isUpVoted: integer("is_upvoted", { mode: "boolean" }).notNull()
+}, (table) => {
+  return {
+    pk: primaryKey({ columns: [table.chatId, table.messageId] })
+  }
+})
+
+export type Vote = InferSelectModel<typeof vote>;
 
 export const userRelations = relations(user, ({ many }) => ({
   chats: many(chat),

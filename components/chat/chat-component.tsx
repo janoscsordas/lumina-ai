@@ -3,12 +3,15 @@
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Message, useChat } from "@ai-sdk/react";
 import { TextShimmer } from "../ui/text-shimmer";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ChatMessage } from "../ui/chat-message";
 import { useCallback, useEffect, useRef } from "react";
 import { ChatInput } from "./chat-input";
+import { CopyButton } from "../ui/copy-button";
+import LikeButton from "./like-button";
+import { Vote } from "@/database/schema/chat-schema";
 
 export default function ChatComponent({
   id,
@@ -48,6 +51,29 @@ export default function ChatComponent({
     },
   });
 
+  const { data: votes } = useQuery({
+    queryKey: ["votes"],
+    queryFn: async () => {
+      if (!initialMessages) {
+        return []
+      }
+
+      const response = await fetch(`/api/vote?chatId=${id}`)
+
+      if (!response.ok) {
+        throw new Error("Error fetching votes")
+      }
+
+      const data = await response.json()
+
+      return data.data as Vote[]
+    },
+    retry: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  })
+
   const handleStop = useCallback(() => {
     if (typeof stop === 'function') {
       stop();
@@ -71,6 +97,17 @@ export default function ChatComponent({
               content={m.content}
               role={m.role}
               className="my-2"
+              actions={
+                <>
+                  <div className="border-r pr-1">
+                    <CopyButton
+                      content={m.content}
+                      copyMessage="Copied response to clipboard!"
+                    />
+                  </div>
+                  <LikeButton chatId={id} messageId={m.id} isUpvoted={votes ? votes.find((vote) => vote.messageId === m.id)?.isUpVoted : null} />
+                </>
+              }
             />
           ))}
           {status === "submitted" && (
