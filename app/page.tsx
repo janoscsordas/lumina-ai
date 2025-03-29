@@ -14,7 +14,7 @@ export default async function Home() {
       <AppSidebar />
       <SidebarInset>
         <AppHeader />
-        <ChatComponent id={id} initialMessages={[]} selectedChatModel={chatModel} />
+        <ChatComponent id={id} initialMessages={[]} selectedChatModel={chatModel} isReadOnly={false} />
       </SidebarInset>
     </SidebarProvider>
   );
