@@ -17,10 +17,12 @@ export default function ChatComponent({
   id,
   initialMessages,
   selectedChatModel,
+  isReadOnly
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedChatModel: string | undefined;
+  isReadOnly: boolean
 }) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -54,7 +56,7 @@ export default function ChatComponent({
   const { data: votes } = useQuery({
     queryKey: ["votes"],
     queryFn: async () => {
-      if (!initialMessages) {
+      if (!initialMessages.length) {
         return []
       }
 
@@ -98,15 +100,17 @@ export default function ChatComponent({
               role={m.role}
               className="my-2"
               actions={
-                <>
-                  <div className="border-r pr-1">
-                    <CopyButton
-                      content={m.content}
-                      copyMessage="Copied response to clipboard!"
-                    />
-                  </div>
-                  <LikeButton chatId={id} messageId={m.id} isUpvoted={votes ? votes.find((vote) => vote.messageId === m.id)?.isUpVoted : null} />
-                </>
+                !isReadOnly && (
+                  <>
+                    <div className="border-r pr-1">
+                      <CopyButton
+                        content={m.content}
+                        copyMessage="Copied response to clipboard!"
+                      />
+                    </div>
+                    <LikeButton chatId={id} messageId={m.id} isUpvoted={votes ? votes.find((vote) => vote.messageId === m.id)?.isUpVoted : null} />
+                  </>
+                )
               }
             />
           ))}
@@ -123,14 +127,22 @@ export default function ChatComponent({
               "An error occurred while processing your request."}
           </div>
         )}
-        <ChatInput
-          selectedChatModel={selectedChatModel}
-          input={input}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          status={status}
-          stop={handleStop}
-        />
+        {isReadOnly ? (
+          <div className="w-full h-16 flex justify-center items-center">
+            <div className="rounded-lg px-4 py-4 border border-border">
+              <p>You see this chat in read-only mode.</p>
+            </div>
+          </div>
+        ) : (
+          <ChatInput
+            selectedChatModel={selectedChatModel}
+            input={input}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            status={status}
+            stop={handleStop}
+          />
+        )}
       </div>
     </section>
   );

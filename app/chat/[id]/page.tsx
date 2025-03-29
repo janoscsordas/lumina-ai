@@ -28,12 +28,14 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
+  const isReadOnly = chat.visibility === "public" && session?.user.id !== chat.userId
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
         <AppHeader />
-        <ChatWrapper id={chat.id} />
+        <ChatWrapper id={chat.id} isReadOnly={isReadOnly} />
       </SidebarInset>
     </SidebarProvider>
   )

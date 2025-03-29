@@ -3,7 +3,7 @@ import ChatComponent from "./chat-component";
 import { getMessagesByChatId } from "@/lib/db/queries";
 import { getChatModelFromCookie } from "@/actions/chat.action";
 
-export default async function ChatWrapper({ id }: { id: string }) {
+export default async function ChatWrapper({ id, isReadOnly }: { id: string, isReadOnly: boolean }) {
   const messagesFromDB = await getMessagesByChatId({
     id,
   });
@@ -14,6 +14,7 @@ export default async function ChatWrapper({ id }: { id: string }) {
       id={id}
       initialMessages={convertToUIMessages(messagesFromDB)}
       selectedChatModel={chatModel}
+      isReadOnly={isReadOnly}
     />
   );
 }
