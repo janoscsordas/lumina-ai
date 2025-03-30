@@ -24,6 +24,7 @@ export default function AITextarea({
   selectedChatModel: string | undefined;
   stop: () => void;
 }) {
+
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: 80,
     maxHeight: 200,
@@ -76,8 +77,8 @@ export default function AITextarea({
 
           <div className="h-14">
             <div className="absolute left-3 right-3 bottom-3 flex items-center justify-between">
-              <div className="flex items-center">
-                <ModelSelector selectedChatModel={selectedChatModel} />
+              <div className="flex items-center gap-3">
+                <ModelSelector selectedChatModel={selectedChatModel} disabled={disabled} />
               </div>
               {disabled ? (
                 <button 
