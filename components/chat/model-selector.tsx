@@ -13,7 +13,7 @@ import {
 import { aiModels } from "@/lib/ai/models";
 import toast from "react-hot-toast";
 
-export default function ModelSelector({ selectedChatModel }: { selectedChatModel: string | undefined }) {
+export default function ModelSelector({ selectedChatModel, disabled }: { selectedChatModel: string | undefined, disabled: boolean | undefined }) {
     const handleModelChange = async (modelId: string) => {
         const { success, error } = await saveChatModelAsCookie(modelId);
 
@@ -23,7 +23,7 @@ export default function ModelSelector({ selectedChatModel }: { selectedChatModel
     }
 
     return (
-        <Select onValueChange={handleModelChange} value={selectedChatModel || aiModels[0].id}>
+        <Select onValueChange={handleModelChange} value={selectedChatModel || aiModels[0].id} disabled={disabled}>
             <SelectTrigger>
                 <SelectValue placeholder="Select a model" />
             </SelectTrigger>

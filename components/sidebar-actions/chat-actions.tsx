@@ -52,10 +52,8 @@ export default function ChatActions({ chat }: { chat: Chat }) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["chat-history"] });
 
-      if (pathName !== "/") {
+      if (pathName == `/chat/${chat.id}`) {
         router.push("/");
-      } else {
-        router.refresh();
       }
 
       toast.success("Chat deleted successfully!");
@@ -67,7 +65,7 @@ export default function ChatActions({ chat }: { chat: Chat }) {
     },
   });
 
-  const favouriteMutation = useMutation({
+  const favoriteMutation = useMutation({
     mutationFn: async ({
       chatId,
       isFavorite,
@@ -143,7 +141,7 @@ export default function ChatActions({ chat }: { chat: Chat }) {
           >
             <DropdownMenuItem
               onClick={() =>
-                favouriteMutation.mutate({
+                favoriteMutation.mutate({
                   chatId: chat.id,
                   isFavorite: chat.isFavorite,
                 })
@@ -196,7 +194,7 @@ export default function ChatActions({ chat }: { chat: Chat }) {
           <DialogHeader>
             <DialogTitle>Share link</DialogTitle>
             <DialogDescription>
-              Anyone who is logged in and has this link will be able to view this.
+              Anyone who is logged in and has this link will be able to view your chat in read-only mode.
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2">

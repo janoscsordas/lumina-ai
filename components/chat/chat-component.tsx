@@ -12,6 +12,7 @@ import { ChatInput } from "./chat-input";
 import { CopyButton } from "../ui/copy-button";
 import LikeButton from "./like-button";
 import { Vote } from "@/database/schema/chat-schema";
+import { PromptSuggestions } from "../ui/prompt-suggestions";
 
 export default function ChatComponent({
   id,
@@ -32,6 +33,7 @@ export default function ChatComponent({
     messages,
     input,
     handleInputChange,
+    setInput,
     handleSubmit,
     error,
     status,
@@ -88,10 +90,27 @@ export default function ChatComponent({
     }
   }, [messages]);
 
+  const append = (message: { role: "user", content: string }) => {
+    setInput(message.content)
+  }
+
   return (
     <section className="w-[98%] relative">
       <div className="flex flex-col w-[98%] md:w-[95%] 2xl:w-2/3 min-h-screen mx-auto pt-2">
         <ScrollArea className="h-1 flex-grow px-4 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground dark:[&::-webkit-scrollbar-track]:bg-transparent">
+          {(!initialMessages.length && !messages.length) && (
+            <div className="w-full h-full flex justify-center items-center">
+              <PromptSuggestions 
+                label="How can I help you today?"
+                append={append}
+                suggestions={[
+                  "Can you suggest a good book to read?",
+                  "What's a good hobby to start?",
+                  "How does AI work?"
+                ]}
+              /> 
+            </div>
+          )}
           {messages.map((m) => (
             <ChatMessage
               key={m.id}

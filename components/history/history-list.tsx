@@ -3,11 +3,12 @@
 import { Chat } from "@/database/schema/chat-schema";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { ArrowRightIcon, Trash2 } from "lucide-react";
+import { ArrowRightIcon, Star, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function HistoryList({
     chatHistory
@@ -50,8 +51,20 @@ export default function HistoryList({
             {chatHistory.length > 0 ? chatHistory.map((chat) => (
                 <Card
                     key={chat.id}
-                    className="w-full transition-all border border-border dark:hover:border-lime group my-1"
+                    className="w-full relative transition-all border border-border dark:hover:border-lime group my-1"
                 >
+                    {chat.isFavorite && (
+                        <div className="absolute inset-0 -top-2 -left-2">
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <Star className="size-5 fill-yellow-500" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Marked as favorite</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
+                    )}
                     <CardContent className="flex items-center justify-between">
                         <div className="flex flex-col">
                             <h3 className="font-medium text-sm line-clamp-1">{chat.title}</h3>
