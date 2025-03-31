@@ -40,7 +40,9 @@ export async function getChatModelFromCookie() {
 export async function saveChatModelAsCookie(model: string) {
     const cookieStore = await cookies();
 
-    if (aiModels.map((m) => m.id).includes(model)) {
+    const modelIsInModels = aiModels.map((m) => m.id).includes(model)
+
+    if (modelIsInModels) {
         cookieStore.set('chat-model', model);
         return {
             success: true,

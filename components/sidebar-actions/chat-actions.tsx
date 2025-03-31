@@ -194,7 +194,7 @@ export default function ChatActions({ chat }: { chat: Chat }) {
           <DialogHeader>
             <DialogTitle>Share link</DialogTitle>
             <DialogDescription>
-              Anyone who is logged in and has this link will be able to view your chat in read-only mode.
+              Anyone who has this link is able to view your chat in read-only mode.
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2">
