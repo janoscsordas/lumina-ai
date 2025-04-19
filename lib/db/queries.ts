@@ -27,7 +27,8 @@ export async function getMessagesByChatId({ id }: { id: string }) {
     const selectedMessages = await db
       .select()
       .from(message)
-      .where(eq(message.chatId, id));
+      .where(eq(message.chatId, id))
+      .orderBy(desc(message.createdAt));
 
     return selectedMessages;
   } catch (error) {

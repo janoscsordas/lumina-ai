@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ChatMessage } from "../ui/chat-message";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { ChatInput } from "./chat-input";
 import { CopyButton } from "../ui/copy-button";
 import LikeButton from "./like-button";
@@ -49,6 +49,10 @@ export default function ChatComponent({
 
         router.replace(`/chat/${id}`);
       }
+
+      if (bottomDivRef.current) {
+        bottomDivRef.current.scrollIntoView();
+      }
     },
     onError: (err) => {
       toast.error(err.message);
@@ -84,12 +88,6 @@ export default function ChatComponent({
     }
   }, [stop]);
 
-  useEffect(() => {
-    if (bottomDivRef.current) {
-      bottomDivRef.current.scrollIntoView();
-    }
-  }, [messages]);
-
   const append = (message: { role: "user", content: string }) => {
     setInput(message.content)
   }
@@ -97,7 +95,7 @@ export default function ChatComponent({
   return (
     <section className="w-[98%] relative">
       <div className="flex flex-col w-[98%] md:w-[95%] 2xl:w-2/3 min-h-screen mx-auto pt-2">
-        <ScrollArea className="h-1 flex-grow px-4 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground dark:[&::-webkit-scrollbar-track]:bg-transparent">
+        <ScrollArea className="h-1 flex-grow flex flex-col-reverse px-4 py-2 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground dark:[&::-webkit-scrollbar-track]:bg-transparent">
           {(!initialMessages.length && !messages.length) && (
             <div className="w-full h-full flex justify-center items-center">
               <PromptSuggestions 
