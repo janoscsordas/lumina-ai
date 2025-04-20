@@ -28,7 +28,6 @@ export async function getMessagesByChatId({ id }: { id: string }) {
       .select()
       .from(message)
       .where(eq(message.chatId, id))
-      .orderBy(desc(message.createdAt));
 
     return selectedMessages;
   } catch (error) {
